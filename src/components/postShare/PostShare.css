@@ -65,6 +65,6 @@
 .previewImage > img {
   width: 100%;
   max-height: 20rem;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 0.5rem;
 }
