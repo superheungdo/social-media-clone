@@ -11,12 +11,16 @@
   --photo: #4cb256;
   --video: #4a4eb7;
   --location: #ef5757;
-  --shedule: #e1ae4a;
+  --schedule: #e1ae4a;
 }
 
 body {
   font-family: "Inter", sans-serif;
   margin: 0;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 .App {
