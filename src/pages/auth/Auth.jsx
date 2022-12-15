@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./Auth.css";
 import Logo from "../../img/logo.png";
+import { signUp, logIn } from "../../actions/authActions";
 
 const UsernameInput = ({ value, onChange }) => (
   <div>
@@ -108,6 +111,10 @@ const LogIn = ({ data, handleChange }) => {
 };
 
 const Auth = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.authReducer.loading);
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [data, setData] = useState({
     firstname: "",
@@ -117,8 +124,6 @@ const Auth = () => {
     confirmpassword: "",
   });
   const [wrongPassword, setWrongPassword] = useState(false);
-
-  console.log(data.firstname);
 
   const toggleAuth = () => setIsSignUp((prevState) => !prevState);
 
@@ -135,12 +140,13 @@ const Auth = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(data);
 
     if (isSignUp) {
       data.password === data.confirmpassword
-        ? setWrongPassword(false)
+        ? dispatch(signUp(data, navigate))
         : setWrongPassword(true);
+    } else {
+      dispatch(logIn(data, navigate));
     }
   };
 
@@ -181,8 +187,12 @@ const Auth = () => {
             </span>
           </div>
 
-          <button className="button infoButton" type="submit">
-            {isSignUp ? "Signup" : "Login"}
+          <button
+            className="button infoButton"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Loading..." : isSignUp ? "Signup" : "Login"}
           </button>
         </form>
       </div>
