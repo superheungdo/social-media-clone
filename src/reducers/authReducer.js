@@ -20,6 +20,16 @@ const authReducer = (
       return { ...state, loading: false, error: true };
 
     /* LINE */
+    case "LOG_OUT":
+      localStorage.clear();
+
+      return {
+        authData: null,
+        loading: false,
+        error: false,
+      };
+
+    /* LINE */
     default:
       return state;
   }
