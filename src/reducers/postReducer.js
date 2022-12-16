@@ -1,8 +1,9 @@
 const postReducer = (
   state = {
     posts: [],
-    uploading: false,
+    loading: false,
     error: false,
+    uploading: false,
   },
   action
 ) => {
@@ -21,6 +22,16 @@ const postReducer = (
 
     case "UPLOAD_FAIL":
       return { ...state, error: true, uploading: false };
+
+    /* LINE - Posts */
+    case "RETREIVING_START":
+      return { ...state, loading: true, error: false };
+
+    case "RETREIVING_SUCCESS":
+      return { ...state, posts: action.data, loading: false, error: false };
+
+    case "RETREIVING_FAIL":
+      return { ...state, loading: false, error: true };
 
     /* LINE - Default */
     default:
