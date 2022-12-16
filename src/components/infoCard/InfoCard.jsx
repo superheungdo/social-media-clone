@@ -47,6 +47,7 @@ const InfoCard = () => {
             <ProfileModal
               modalOpened={modalOpened}
               onCloseModal={onCloseModal}
+              data={user}
             />
           </div>
         )}
