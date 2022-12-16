@@ -9,8 +9,9 @@ import {
 } from "@iconscout/react-unicons";
 
 import "./PostShare.css";
-import ProfileImage from "../../img/profileImg.jpg";
 import { uploadImage, uploadPost } from "../../actions/uploadAction";
+
+const serverPublic = process.env.REACT_APP_SERVER_PUBLIC_URL;
 
 const PostShare = () => {
   const dispatch = useDispatch();
@@ -73,7 +74,14 @@ const PostShare = () => {
 
   return (
     <div className="PostShare">
-      <img src={ProfileImage} alt="profile" />
+      <img
+        src={
+          user.coverPicture
+            ? serverPublic + user.coverPicture
+            : serverPublic + "defaultProfile.png"
+        }
+        alt="profile"
+      />
 
       <div>
         <input
