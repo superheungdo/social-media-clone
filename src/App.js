@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Auth from "./pages/auth/Auth";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
+import Chat from "./pages/chat/Chat";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
@@ -34,6 +35,11 @@ const App = () => {
         <Route
           path="/profile/:id"
           element={isLoggedIn ? <Profile /> : <Navigate to="/auth" />}
+        />
+
+        <Route
+          path="/chat"
+          element={isLoggedIn ? <Chat /> : <Navigate to="/auth" />}
         />
 
         <Route path="*" element={<NotFound />} />
