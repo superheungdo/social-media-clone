@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+
 import { getUser } from "../../api/userRequests";
 
 const Conversation = ({ data, currentUser, online }) => {
+  const dispatch = useDispatch();
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -11,6 +14,7 @@ const Conversation = ({ data, currentUser, online }) => {
       try {
         const { data } = await getUser(userId);
         setUserData(data);
+        dispatch({ type: "SAVE_USER", data: data });
       } catch (error) {
         console.log(error);
       }

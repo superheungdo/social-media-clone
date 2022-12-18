@@ -6,7 +6,7 @@ import "./ChatBox.css";
 import { getUser } from "../../api/userRequests";
 import { addMessage, getMessages } from "../../api/messageRequests";
 
-const ChatBox = ({ chat, currentUser, receivedMessage }) => {
+const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
   const [userData, setUserData] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -27,6 +27,11 @@ const ChatBox = ({ chat, currentUser, receivedMessage }) => {
       senderId: currentUser,
       text: newMessage,
     };
+
+    const receiverId = chat.members.find((id) => id !== currentUser);
+
+    // send message to socket server
+    setSendMessage({ ...message, receiverId });
 
     // send message to database
     try {
@@ -76,7 +81,6 @@ const ChatBox = ({ chat, currentUser, receivedMessage }) => {
 
   // Receive Message from parent component
   useEffect(() => {
-    console.log("Message Arrived: ", receivedMessage);
     if (receivedMessage !== null && receivedMessage.chatId === chat._id) {
       setMessages([...messages, receivedMessage]);
     }
@@ -87,7 +91,7 @@ const ChatBox = ({ chat, currentUser, receivedMessage }) => {
       {chat ? (
         <>
           {/* Chat Header */}
-          <div className="chat-header">
+          <div key={chat._id} className="chat-header">
             <div className="follower">
               <div>
                 <img
@@ -124,6 +128,7 @@ const ChatBox = ({ chat, currentUser, receivedMessage }) => {
           <div className="chat-body">
             {messages.map((message) => (
               <div
+                key={message._id}
                 ref={scrollRef}
                 className={
                   message.senderId === currentUser ? "message own" : "message"
