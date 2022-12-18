@@ -1,104 +1,155 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./Auth.css";
 import Logo from "../../img/logo.png";
+import { signUp, logIn } from "../../actions/authActions";
 
-const SignUp = () => {
+const UsernameInput = ({ value, onChange }) => (
+  <div>
+    <input
+      className="infoInput"
+      type="text"
+      name="username"
+      placeholder="Username"
+      required
+      value={value}
+      onChange={onChange}
+    />
+  </div>
+);
+
+const PasswordInput = ({ name, placeholder, value, onChange }) => (
+  <input
+    className="infoInput"
+    type="password"
+    name={name}
+    placeholder={placeholder}
+    required
+    value={value}
+    onChange={onChange}
+  />
+);
+
+const SignUp = ({ data, handleChange, wrongPassword }) => {
   return (
-    <div className="a-right">
-      <form className="infoForm authForm">
-        <h3>Sign up</h3>
+    <>
+      <h3>Sign up</h3>
 
-        <div>
-          <input
-            type="text"
-            placeholder="First Name"
-            className="infoInput"
-            name="firstname"
-          />
+      <div>
+        <input
+          className="infoInput"
+          type="text"
+          name="firstname"
+          placeholder="First Name"
+          required
+          value={data.firstname}
+          onChange={handleChange}
+        />
 
-          <input
-            type="text"
-            placeholder="Last Name"
-            className="infoInput"
-            name="lastname"
-          />
-        </div>
+        <input
+          className="infoInput"
+          type="text"
+          name="lastname"
+          placeholder="Last Name"
+          required
+          value={data.lastname}
+          onChange={handleChange}
+        />
+      </div>
 
-        <div>
-          <input
-            type="text"
-            className="infoInput"
-            name="username"
-            placeholder="Username"
-          />
-        </div>
+      <UsernameInput value={data.username} onChange={handleChange} />
 
-        <div>
-          <input
-            type="text"
-            className="infoInput"
-            name="password"
-            placeholder="Password"
-          />
+      <div>
+        <PasswordInput
+          name="password"
+          placeholder="Password"
+          value={data.password}
+          onChange={handleChange}
+        />
+        <PasswordInput
+          name="confirmpassword"
+          placeholder="Confirm password"
+          value={data.confirmpassword}
+          onChange={handleChange}
+        />
+      </div>
 
-          <input
-            type="text"
-            className="infoInput"
-            name="confirmpass"
-            placeholder="Confirm Password"
-          />
-        </div>
-
-        <div>
-          <span style={{ fontSize: "12px" }}>
-            Already have an account. Login!
-          </span>
-        </div>
-        <button className="button infoButton" type="submit">
-          Signup
-        </button>
-      </form>
-    </div>
+      <span
+        style={{
+          color: "red",
+          fontSize: "12px",
+          alignSelf: "flex-end",
+          marginRight: "5px",
+          display: wrongPassword ? "block" : "none",
+        }}
+      >
+        * Confirm password is not same
+      </span>
+    </>
   );
 };
 
-const LogIn = () => {
+const LogIn = ({ data, handleChange }) => {
   return (
-    <div className="a-right">
-      <form className="infoForm authForm">
-        <h3>Log In</h3>
+    <>
+      <h3>Log In</h3>
 
-        <div>
-          <input
-            type="text"
-            placeholder="Username"
-            className="infoInput"
-            name="username"
-          />
-        </div>
+      <UsernameInput value={data.username} onChange={handleChange} />
 
-        <div>
-          <input
-            type="password"
-            className="infoInput"
-            placeholder="Password"
-            name="password"
-          />
-        </div>
-
-        <div>
-          <span style={{ fontSize: "12px" }}>
-            Don't have an account Sign up
-          </span>
-          <button className="button infoButton">Login</button>
-        </div>
-      </form>
-    </div>
+      <div>
+        <PasswordInput
+          name="password"
+          placeholder="Password"
+          value={data.password}
+          onChange={handleChange}
+        />
+      </div>
+    </>
   );
 };
 
 const Auth = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.authReducer.loading);
+
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [data, setData] = useState({
+    firstname: "",
+    lastname: "",
+    username: "",
+    password: "",
+    confirmpassword: "",
+  });
+  const [wrongPassword, setWrongPassword] = useState(false);
+
+  const toggleAuth = () => setIsSignUp((prevState) => !prevState);
+
+  const handleChange = (e) => {
+    if (e.target.name === "password" || e.target.name === "confirmpassword") {
+      setWrongPassword(false);
+    }
+
+    setData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (isSignUp) {
+      data.password === data.confirmpassword
+        ? dispatch(signUp(data, navigate))
+        : setWrongPassword(true);
+    } else {
+      dispatch(logIn(data, navigate));
+    }
+  };
+
   return (
     <div className="Auth">
       <div className="a-left">
@@ -110,7 +161,41 @@ const Auth = () => {
         </div>
       </div>
 
-      <LogIn />
+      <div className="a-right">
+        <form className="infoForm authForm" onSubmit={handleSubmit}>
+          {isSignUp ? (
+            <SignUp
+              data={data}
+              handleChange={handleChange}
+              wrongPassword={wrongPassword}
+            />
+          ) : (
+            <LogIn data={data} handleChange={handleChange} />
+          )}
+
+          <div>
+            <span
+              style={{ fontSize: "12px", cursor: "pointer" }}
+              onClick={toggleAuth}
+            >
+              {isSignUp
+                ? "Already have an account? "
+                : "Don't have an account? "}
+              <span className="toggle-btn" style={{ fontWeight: 900 }}>
+                {isSignUp ? "Log in" : "Sign up"}
+              </span>
+            </span>
+          </div>
+
+          <button
+            className="button infoButton"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Loading..." : isSignUp ? "Signup" : "Login"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

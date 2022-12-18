@@ -10,9 +10,22 @@
   justify-content: space-around;
 }
 
+.navIcons > a > img {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .navIcons > img {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.navIcons > svg:hover {
+  cursor: pointer;
+}
+
+.navIcons > img:hover {
+  cursor: pointer;
 }
 
 .r-button {
